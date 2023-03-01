@@ -1,5 +1,6 @@
 package org.dwcj.cui;
 
+import org.dwcj.App;
 import org.dwcj.widgets.terminal.events.TerminalKeyEvent;
 
 import java.io.*;
@@ -40,7 +41,12 @@ public class BBjTerminalThread extends  Thread{
      final String kd="\033[B"       ;
      final String kl="\033[D"       ;
      final String kr="\033[C"       ;
-
+     final String IN="\033[2~";
+     final String DL="\033[3~";
+     final String kh="\033[1~";
+     final String EN="\033[4~";
+     final String PU="\033[5~";
+     final String PD="\033[6~";
 
     @Override
     public void run() {
@@ -53,7 +59,7 @@ public class BBjTerminalThread extends  Thread{
         script=script+"export BBTERM=T3"+"\n";
         script=script+"export TERMCAP="+bbjHome+"/cfg/termcap"+"\n";
         script=script+"export TERM=linux"+"\n";
-        script=script+bbjHome+"/bin/bbj _util"+"\n";
+        script=script+bbjHome+"/bin/bbj -WD/Users/beff/plugins-workspace/dwcj-cui-bbj-samples/ functionkeys.bbj"+"\n";
 
         script=script+"exit"+"\n" ;
 
@@ -114,12 +120,16 @@ public class BBjTerminalThread extends  Thread{
                 TerminalKeyEvent k = keyq.poll();
 
             try {
-                switch (k.getKey()) {
+                System.out.println("getKey: "+k.getKey());
+                System.out.println("getCode: "+k.getCode());
+
+
+                switch (k.getCode()) {
                     case "Enter":
-                        os.write(13);
-                        break;
+                    case "NumpadEnter":
+                        os.write(13); break;
                     case "Escape":
-                        os.write(3); break;
+                        os.write(27); break;
                     case "ArrowLeft":
                         os.write(kl.getBytes()); break;
                     case "ArrowRight":
@@ -131,36 +141,80 @@ public class BBjTerminalThread extends  Thread{
                     case "Backspace":
                         os.write(8); break;
                     case "F1":
+                        if (k.getShiftDown()) {
+                            os.write(kC.getBytes());
+                            break;
+                        }
                         os.write(k1.getBytes()); break;
                     case "F2":
+                        if (k.getShiftDown()) {
+                            os.write(kD.getBytes());
+                            break;
+                        }
                         os.write(k2.getBytes()); break;
                     case "F3":
+                        if (k.getShiftDown()) {
+                            os.write(kE.getBytes());
+                            break;
+                        }
                         os.write(k3.getBytes()); break;
                     case "F4":
+                        if (k.getShiftDown()) {
+                            os.write(kF.getBytes());
+                            break;
+                        }
                         os.write(k4.getBytes()); break;
                     case "F5":
+                        if (k.getShiftDown()) {
+                            os.write(kG.getBytes());
+                            break;
+                        }
                         os.write(k5.getBytes()); break;
                     case "F6":
+                        if (k.getShiftDown()) {
+                            os.write(kH.getBytes());
+                            break;
+                        }
                         os.write(k6.getBytes()); break;
                     case "F7":
+                        if (k.getShiftDown()) {
+                            os.write(kI.getBytes());
+                            break;
+                        }
                         os.write(k7.getBytes()); break;
                     case "F8":
+                        if (k.getShiftDown()) {
+                            os.write(kJ.getBytes());
+                            break;
+                        }
                         os.write(k8.getBytes()); break;
                     case "F9":
                         os.write(k9.getBytes()); break;
                     case "F10":
                         os.write(k0.getBytes()); break;
-                        /*
+                    case "F11":
+                        os.write(kA.getBytes()); break;
+                    case "F12":
+                        os.write(kB.getBytes()); break;
                     case "PageUp":
-                        os.write(kp); break;
+                        os.write(PU.getBytes()); break;
                     case "PageDown":
-                        os.write(kn); break;
+                        os.write(PD.getBytes()); break;
                     case "Home":
-                        os.write(kh); break;
+                        os.write(kh.getBytes()); break;
                     case "End":
-                        os.write(kh); break;
-                         */
+                        os.write(EN.getBytes()); break;
+                    case "Insert":
+                        os.write(IN.getBytes()); break;
+                    case "Delete":
+                        os.write(DL.getBytes()); break;
+
                     default:
+                        if (k.getCtrlDown() && k.getCode().startsWith("Key")){
+                            int c = k.getKey().getBytes()[0]-96;
+                            os.write(c);
+                            break;
+                        }
                         os.write(k.getKey().getBytes());
 
                 }
